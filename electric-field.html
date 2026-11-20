@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Elektromos térerősség</title>
+<link rel="stylesheet" href="./electric-field.css">
+</head>
+<body>
+<canvas id="canvas_bg" aria-hidden="true"></canvas>
+<canvas id="canvas" aria-label="Az elektromos tér és a töltések szemléltetése"></canvas>
+<div id="charge-tooltip" role="tooltip" hidden></div>
+<button id="menu-toggle" type="button" aria-label="Menü megnyitása" aria-expanded="false" aria-controls="simulation-menu">
+  <span></span><span></span><span></span>
+</button>
+<aside id="simulation-menu" aria-label="Szimuláció beállításai" hidden>
+  <header class="menu-header">
+    <h1>Elektromos térerősség szimuláció</h1>
+    <button id="menu-close" type="button" aria-label="Menü bezárása"></button>
+  </header>
+  <fieldset>
+    <legend>A szimuláció módja</legend>
+    <label class="mode-option">
+      <input type="radio" name="mode" value="free" checked>
+      <span><strong>Szabad mód</strong><small>Véletlenszerű helyen és előjellel megjelenő próbatöltések. Piros: pozitív, kék: negatív.</small></span>
+    </label>
+    <label class="mode-option">
+      <input type="radio" name="mode" value="test">
+      <span><strong>Teszt mód</strong><small>Bal kattintás: negatív; jobb kattintás: pozitív próbatöltés létrehozása tetszőleges helyen. Jobb kattintás egy fix töltésen, és az eltűnik.</small></span>
+    </label>
+  </fieldset>
+  <section class="settings-group" aria-labelledby="fixed-settings-title">
+    <h2 id="fixed-settings-title">Fix töltések</h2>
+    <div class="fixed-settings-row">
+      <label id="fixed-charge-setting" class="charge-count compact-count" for="charge-count">
+        <span>Darabszám:</span>
+        <input id="charge-count" type="number" min="1" max="18" value="12">
+      </label>
+      <div class="charge-bounds">
+        <label for="min-charge-magnitude">
+          <span>Minimum töltés (C):</span>
+          <input id="min-charge-magnitude" type="text" inputmode="decimal" placeholder="1*10^-5">
+        </label>
+        <label for="max-charge-magnitude">
+          <span>Maximum töltés (C):</span>
+          <input id="max-charge-magnitude" type="text" inputmode="decimal" placeholder="9*10^-3">
+        </label>
+      </div>
+    </div>
+  </section>
+  <section class="settings-group" aria-labelledby="orbiter-settings-title">
+    <h2 id="orbiter-settings-title">Próbatöltések</h2>
+    <div class="orbiter-settings-row">
+      <label id="free-orbiter-setting" class="charge-count compact-count" for="free-orbiter-count">
+        <span>Darabszám:</span>
+        <input id="free-orbiter-count" type="number" min="1" max="15" value="15">
+      </label>
+      <label class="charge-count compact-count" for="orbiter-charge-magnitude">
+        <span>Nagyság (C):</span>
+        <input id="orbiter-charge-magnitude" type="text" inputmode="decimal" placeholder="1*10^-8">
+      </label>
+    </div>
+    <label class="setting-toggle">
+      <input id="show-force-arrows" type="checkbox" checked>
+      <span>Erőnyilak megjelenítése a mozgó töltéseknél</span>
+    </label>
+  </section>
+  <p id="charge-magnitude-error" role="alert" hidden></p>
+  <div class="settings-actions">
+    <button id="apply-settings" type="button">Alkalmaz</button>
+    <button id="regenerate-simulation" type="button">Újragenerálás</button>
+  </div>
+  <p id="menu-status" role="status">A szabad mód aktív.</p>
+  <section class="physics-notes" aria-labelledby="physics-notes-title">
+    <h2 id="physics-notes-title">Hogyan olvasd a szimulációt?</h2>
+    <p>A Coulomb-törvény szerint két töltés között az elektromos erő nagysága
+      <strong>F = k · |q₁ · q₂| / r²</strong>, ahol q₁ és q₂ a töltések, r a távolságuk,
+      k pedig az arányossági tényező. Azonos előjelű töltések taszítják, ellentétes előjelűek vonzzák egymást.</p>
+    <ul>
+      <li><strong>Piros, +:</strong> pozitív töltés; <strong>kék, −:</strong> negatív töltés.</li>
+      <li>A térerővonalak a pozitív töltésektől indulnak és a negatívak felé tartanak. A nagyobb töltéshez több vonal tartozik, de a vonalak száma szemléltető jelleggel nem lineáris.</li>
+      <li>A mozgó töltés melletti nyíl az arra ható eredő erő irányát mutatja.</li>
+    </ul>
+    <p class="model-limits"><strong>A modell korlátai:</strong> A töltések véletlenszerű helye és nagysága miatt az újragenerált elrendezések nem mindig alkalmasak közvetlen összehasonlításra. A képlet az erő irányát és a töltések közötti kapcsolatot szemlélteti, de a program nem valós SI-skálán számolja az erőket. A mozgás is szemléltető jellegű: a képernyőn mért távolság, a tömeg és az idő nem valós méretarányú, ezért a pályák és az erőnyilak hossza nem tekinthető pontos mérési eredménynek. A fix töltések a szimulációban nem mozdulnak el.</p>
+  </section>
+</aside>
+<script src="./objects/vector2D.js"></script>
+<script src="./objects/forces.js"></script>
+<script src="./objects/ball.js"></script>
+<script src="./electric-field.js"></script>
+</body>
+</html>
